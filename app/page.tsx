@@ -12,7 +12,7 @@ export default function HomePage() {
       <HeroSection />
       <WelcomeSection />
       <AboutPreview />
-      <MissionSection />
+      {/* <MissionSection /> */}
       <FeaturedMinistries />
       <UpcomingEvents />
       <CallToAction />

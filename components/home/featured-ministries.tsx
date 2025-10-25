@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Users, Music, Heart, Baby, Home, HandHeart } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
+import { motion, useInView } from "framer-motion"
 
 const ministries = [
   {
@@ -46,73 +47,94 @@ const ministries = [
 ]
 
 export function FeaturedMinistries() {
-  const [isVisible, setIsVisible] = useState(false)
-  const sectionRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
-      },
-      { threshold: 0.1 },
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [])
+  const sectionRef = useRef(null)
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
 
   return (
-    <section ref={sectionRef} className="py-20 md:py-32 bg-background">
-      <div className="container mx-auto px-4">
+    <section ref={sectionRef} className="relative py-20 md:py-32 bg-background overflow-hidden">
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-vibrant-coral/5 via-transparent to-sky-blue/5" />
+      
+      <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2
-            className={`font-display font-bold text-3xl md:text-5xl text-balance mb-6 transition-all duration-700 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-            }`}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7 }}
+            className="font-display font-bold text-3xl md:text-5xl text-balance mb-6"
           >
-            Get Involved in <span className="text-golden-faith">Ministry</span>
-          </h2>
-          <p
-            className={`text-lg text-muted-foreground text-pretty max-w-2xl mx-auto transition-all duration-700 delay-200 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-            }`}
+            Get Involved in{" "}
+            <span className="bg-gradient-to-r from-golden-faith via-vibrant-coral to-golden-faith bg-clip-text text-transparent">
+              Ministry
+            </span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-lg text-muted-foreground text-pretty max-w-2xl mx-auto"
           >
             Discover your place in our community. Every gift, every passion, every person matters.
-          </p>
+          </motion.p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {ministries.map((ministry, index) => (
-            <Card
+            <motion.div
               key={ministry.title}
-              className={`group hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-              }`}
-              style={{ transitionDelay: `${index * 100}ms` }}
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ 
+                duration: 0.5, 
+                delay: 0.4 + index * 0.1,
+                ease: [0.25, 0.46, 0.45, 0.94]
+              }}
+              whileHover={{ y: -8, scale: 1.03 }}
             >
-              <CardContent className="p-6">
-                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${ministry.color} mb-4`}>
-                  <ministry.icon className="w-7 h-7" />
-                </div>
-                <h3 className="font-display font-semibold text-xl mb-3 group-hover:text-golden-faith transition-colors">
-                  {ministry.title}
-                </h3>
-                <p className="text-muted-foreground text-pretty leading-relaxed">{ministry.description}</p>
-              </CardContent>
-            </Card>
+              <Card className="group hover:shadow-xl transition-all duration-500 cursor-pointer border-2 hover:border-golden-faith/20 relative overflow-hidden h-full">
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-golden-faith/0 via-transparent to-vibrant-coral/0 group-hover:from-golden-faith/10 group-hover:to-vibrant-coral/5 transition-all duration-500" />
+                
+                <CardContent className="p-6 relative z-10">
+                  <motion.div 
+                    className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${ministry.color} mb-4`}
+                    whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <ministry.icon className="w-7 h-7" />
+                  </motion.div>
+                  <h3 className="font-display font-semibold text-xl mb-3 bg-gradient-to-r from-foreground to-foreground group-hover:from-golden-faith group-hover:to-vibrant-coral bg-clip-text group-hover:text-transparent transition-all duration-300">
+                    {ministry.title}
+                  </h3>
+                  <p className="text-muted-foreground text-pretty leading-relaxed">{ministry.description}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <Button asChild size="lg" className="glow-golden">
-            <Link href="/ministries">Explore All Ministries</Link>
+        <motion.div 
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 1 }}
+        >
+          <Button 
+            asChild 
+            size="lg" 
+            className="group relative overflow-hidden bg-gradient-to-r from-golden-faith via-vibrant-coral to-golden-faith hover:from-vibrant-coral hover:via-golden-faith hover:to-vibrant-coral text-white border-0 shadow-lg hover:shadow-2xl transition-all duration-500"
+          >
+            <Link href="/ministries" className="relative z-10">
+              Explore All Ministries
+              <motion.span
+                className="absolute inset-0 bg-white/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+              />
+            </Link>
           </Button>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

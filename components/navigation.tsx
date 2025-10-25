@@ -36,7 +36,7 @@ export function Navigation() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-        isScrolled ? "bg-white/95 backdrop-blur-xl shadow-lg depth-2" : "bg-white/80 backdrop-blur-md shadow-md",
+        isScrolled ? "bg-white/95 backdrop-blur-xl shadow-lg" : "bg-transparent",
       )}
     >
       <nav className="container mx-auto px-4 py-4">
@@ -56,10 +56,13 @@ export function Navigation() {
                 key={link.href}
                 href={link.href}
                 onClick={handleNavClick}
-                className="text-sm font-medium transition-all duration-300 relative group text-deep-charcoal hover:text-warm-orange hover:scale-110"
+                className={cn(
+                  "text-sm font-medium transition-all duration-300 relative group hover:scale-110",
+                  isScrolled ? "text-deep-charcoal hover:text-warm-orange" : "text-white hover:text-golden-faith"
+                )}
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-warm-orange to-yellow-400 transition-all duration-300 group-hover:w-full glow-orange" />
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-warm-orange to-golden-faith transition-all duration-300 group-hover:w-full glow-orange" />
               </Link>
             ))}
             <Button
@@ -76,7 +79,10 @@ export function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-deep-charcoal hover:text-warm-orange transition-colors"
+            className={cn(
+              "lg:hidden p-2 transition-colors",
+              isScrolled ? "text-deep-charcoal hover:text-warm-orange" : "text-white hover:text-golden-faith"
+            )}
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
