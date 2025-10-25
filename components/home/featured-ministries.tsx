@@ -1,22 +1,23 @@
 "use client"
 
+import * as React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Users, Music, Heart, Baby, Home, HandHeart } from "lucide-react"
 import Link from "next/link"
 import { useRef } from "react"
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, AnimatePresence } from "framer-motion"
 
 const ministries = [
   {
     icon: Users,
-    title: "Youth & Young Adults",
+    title: "Young Adults",
     description: "Empowering the next generation to live boldly for Christ.",
     color: "bg-vibrant-coral/10 text-vibrant-coral",
   },
   {
     icon: Music,
-    title: "Worship & Arts",
+    title: "Worship",
     description: "Expressing our love for God through creative excellence.",
     color: "bg-golden-faith/10 text-golden-faith",
   },
@@ -34,7 +35,7 @@ const ministries = [
   },
   {
     icon: Home,
-    title: "Life Groups",
+    title: "E Groups",
     description: "Growing together in authentic community.",
     color: "bg-olive-earth/10 text-olive-earth",
   },
@@ -49,6 +50,15 @@ const ministries = [
 export function FeaturedMinistries() {
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
+  const [currentMinistryIndex, setCurrentMinistryIndex] = React.useState(0)
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentMinistryIndex((prev) => (prev + 1) % ministries.length)
+    }, 2500) // Change every 2.5 seconds
+
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section ref={sectionRef} className="relative py-20 md:py-32 bg-background overflow-hidden">
@@ -64,8 +74,22 @@ export function FeaturedMinistries() {
             className="font-display font-bold text-3xl md:text-5xl text-balance mb-6"
           >
             Get Involved in{" "}
-            <span className="bg-gradient-to-r from-golden-faith via-vibrant-coral to-golden-faith bg-clip-text text-transparent">
-              Ministry
+            <span className="inline-block relative " style={{ height: "0.8em" }}>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={currentMinistryIndex}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  exit={{ y: "-100%", opacity: 0 }}
+                  transition={{ 
+                    duration: 0.5,
+                    ease: [0.25, 0.46, 0.45, 0.94]
+                  }}
+                  className="absolute top-0 left-0 w-full text-warm-orange whitespace-nowrap"
+                >
+                  {ministries[currentMinistryIndex].title}
+                </motion.span>
+              </AnimatePresence>
             </span>
           </motion.h2>
           <motion.p
